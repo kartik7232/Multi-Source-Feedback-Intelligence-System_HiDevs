@@ -1,8 +1,6 @@
 import sys
 import os
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 import streamlit as st
 import pandas as pd
 from fetchers.playstore import get_playstore_reviews
@@ -11,6 +9,13 @@ from analysis.issues import extract_issues
 from analysis.trends import sentiment_trend
 
 from reports.generate_pdf import generate_report
+
+
+# import importlib
+# import reports.generate_pdf
+
+# importlib.reload(reports.generate_pdf)
+
 
 st.title(" Feedback Intelligence Dashboard")
 
@@ -102,5 +107,18 @@ if "pos" in st.session_state:
         }
 
         generate_report(sentiment_counts, st.session_state["issues"])
-
+        
+        filename = generate_report(
+            sentiment_counts,
+            st.session_state["issues"]
+        )
+        
         st.success("PDF Report Generated!")
+
+        with open(filename, "rb") as f:
+            st.download_button(
+                label="Download Report",
+                data=f,
+                file_name=filename,
+                mime="application/pdf"
+            )
